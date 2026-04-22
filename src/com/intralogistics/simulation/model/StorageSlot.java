@@ -11,16 +11,16 @@ public class StorageSlot {
         return front == null && back == null;
     }
 
-    public boolean addContainer(Container container) {
+    public String  addContainer(Container container) {
         if (front == null) {
             front = container;
-            return true;
+            return "FRONT";
         }
         if (back == null) {
             back = container;
-            return true;
+            return "BACK";
         }
-        return false;
+        return null;
     }
 
     public Container getFront() {
