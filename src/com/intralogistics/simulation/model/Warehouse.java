@@ -35,7 +35,11 @@ public class Warehouse {
                                 + " wurde eingelagert in Gasse " + aisle.getNumber()
                                 + ", Ebene " + level.getNumber()
                                 + ", Fach " + (slotIndex + 1)
-                                + ", Position " + position);
+                                + ", Position " + position
+                                + ", orderId " + container.getOrderId()
+
+                        );
+
 
                         nextAisleIndex = (aisleIndex + 1) % numberOfAisles;
 
@@ -49,6 +53,27 @@ public class Warehouse {
             }
         }
         return false;
+    }
+
+    public int[] findLocationByOrderId(Integer orderId) {
+        if (orderId == null) {
+            return null;
+        }
+
+        for (Aisle aisle : aisles) {
+            for (Level level : aisle.getLevels()) {
+                for (StorageSlot slot : level.getSlots()) {
+                    Container front = slot.getFront();
+                    Container back = slot.getBack();
+
+                    if ((front != null && orderId.equals(front.getOrderId())) ||
+                            (back != null && orderId.equals(back.getOrderId()))) {
+                        return new int[]{aisle.getNumber() - 1, level.getNumber() - 1};
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public List<Aisle> getAisles() {
