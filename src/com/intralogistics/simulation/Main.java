@@ -5,11 +5,11 @@ import com.intralogistics.simulation.model.*;
 
     public class Main {
         public static void main(String[] args) {
-            Warehouse warehouse = new Warehouse(2, 2, 2);
+            Warehouse warehouse = new Warehouse(2, 4, 2);
 
 
-            Container c1 = new Container(1, ContainerType.SOURCE, Priority.LOW, 1001);
-            Container c2 = new Container(2, ContainerType.SOURCE, Priority.LOW, 1002);
+            Container c1 = new Container(1, ContainerType.SOURCE, Priority.HIGH, 1001);
+            Container c2 = new Container(2, ContainerType.SOURCE, Priority.MEDIUM, 1002);
             Container c3 = new Container(3, ContainerType.SOURCE, Priority.LOW, 1001);
             Container c4 = new Container(4, ContainerType.SOURCE, Priority.LOW);
 

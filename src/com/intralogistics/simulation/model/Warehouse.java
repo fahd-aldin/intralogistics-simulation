@@ -29,8 +29,10 @@ public class Warehouse {
         int numberOfAisles = aisles.size();
         int numberOfLevels = aisles.get(0).getLevels().size();
 
+        int[] levelOrder = getLevelSearchOrder(container.getPriority(), numberOfLevels);
+
         for (int levelOffset = 0; levelOffset < numberOfLevels; levelOffset++) {
-            int levelIndex = (nextLevelIndex + levelOffset) % numberOfLevels;
+            int levelIndex = levelOrder[levelOffset];
 
             for (int aisleOffset = 0; aisleOffset < numberOfAisles; aisleOffset++) {
                 int aisleIndex = (nextAisleIndex + aisleOffset) % numberOfAisles;
@@ -48,6 +50,7 @@ public class Warehouse {
                                 + ", Fach " + (slotIndex + 1)
                                 + ", Position " + position
                                 + ", orderId " + container.getOrderId()
+                                + ", Priority " + container.getPriority()
                         );
 
                         nextAisleIndex = (aisleIndex + 1) % numberOfAisles;
@@ -100,12 +103,39 @@ public class Warehouse {
                         + ", Fach " + (slotIndex + 1)
                         + ", Position " + position
                         + ", orderId " + container.getOrderId()
+                        + ", Priority " + container.getPriority()
                         + " (nahe am gleichen Auftrag)");
 
                 return true;
             }
         }
         return false;
+    }
+
+    private int[] getLevelSearchOrder(Priority priority, int numberOfLevels) {
+        int[] order = new int[numberOfLevels];
+
+        if (priority == Priority.HIGH) {
+            for (int i = 0; i < numberOfLevels; i++) {
+                order[i] = i; // 0,1,2,3...
+            }
+        } else if (priority == Priority.LOW) {
+            for (int i = 0; i < numberOfLevels; i++) {
+                order[i] = numberOfLevels - 1 - i; // آخر مستوى للأول
+            }
+        } else {
+            int index = 0;
+            int middle = numberOfLevels / 2;
+
+            for (int i = middle; i < numberOfLevels; i++) {
+                order[index++] = i;
+            }
+            for (int i = 0; i < middle; i++) {
+                order[index++] = i;
+            }
+        }
+
+        return order;
     }
 
     public List<Aisle> getAisles() {
