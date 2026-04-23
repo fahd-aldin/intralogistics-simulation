@@ -15,6 +15,17 @@ public class Warehouse {
         }
     }
     public boolean storeContainer(Container container) {
+        if (container.getOrderId() != null) {
+            int[] location = findLocationByOrderId(container.getOrderId());
+
+            if (location != null) {
+                boolean storedNearOrder = storeInSpecificLocation(container, location[0], location[1]);
+                if (storedNearOrder) {
+                    return true;
+                }
+            }
+        }
+
         int numberOfAisles = aisles.size();
         int numberOfLevels = aisles.get(0).getLevels().size();
 
@@ -37,9 +48,7 @@ public class Warehouse {
                                 + ", Fach " + (slotIndex + 1)
                                 + ", Position " + position
                                 + ", orderId " + container.getOrderId()
-
                         );
-
 
                         nextAisleIndex = (aisleIndex + 1) % numberOfAisles;
 
@@ -74,6 +83,29 @@ public class Warehouse {
             }
         }
         return null;
+    }
+
+    private boolean storeInSpecificLocation(Container container, int aisleIndex, int levelIndex) {
+        Aisle aisle = aisles.get(aisleIndex);
+        Level level = aisle.getLevels().get(levelIndex);
+
+        for (int slotIndex = 0; slotIndex < level.getSlots().size(); slotIndex++) {
+            StorageSlot slot = level.getSlots().get(slotIndex);
+
+            String position = slot.addContainer(container);
+            if (position != null) {
+                System.out.println("Container: " + container.getId()
+                        + " wurde eingelagert in Gasse " + aisle.getNumber()
+                        + ", Ebene " + level.getNumber()
+                        + ", Fach " + (slotIndex + 1)
+                        + ", Position " + position
+                        + ", orderId " + container.getOrderId()
+                        + " (nahe am gleichen Auftrag)");
+
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<Aisle> getAisles() {
