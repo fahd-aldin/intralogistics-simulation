@@ -14,18 +14,29 @@ public class Warehouse {
             aisles.add(new Aisle(i, numberOfLevels, slotsPerLevel));
         }
     }
-    public boolean storeContainer(Container container) {
-        if (container.getOrderId() != null) {
-            int[] location = findLocationByOrderId(container.getOrderId());
 
-            if (location != null) {
-                boolean storedNearOrder = storeInSpecificLocation(container, location[0], location[1]);
-                if (storedNearOrder) {
-                    return true;
-                }
-            }
+    public boolean storeContainer(Container container) {
+        if (storeNearSameOrder(container)) {
+            return true;
         }
 
+        return storeByDistributionAndPriority(container);
+    }
+
+    private boolean storeNearSameOrder(Container container) {
+        if (container.getOrderId() == null) {
+            return false;
+        }
+
+        int[] location = findLocationByOrderId(container.getOrderId());
+        if (location == null) {
+            return false;
+        }
+
+        return storeInSpecificLocation(container, location[0], location[1]);
+    }
+
+    private boolean storeByDistributionAndPriority(Container container) {
         int numberOfAisles = aisles.size();
         int numberOfLevels = aisles.get(0).getLevels().size();
 
@@ -44,14 +55,7 @@ public class Warehouse {
 
                     String position = slot.addContainer(container);
                     if (position != null) {
-                        System.out.println("Container: " + container.getId()
-                                + " wurde eingelagert in Gasse " + aisle.getNumber()
-                                + ", Ebene " + level.getNumber()
-                                + ", Fach " + (slotIndex + 1)
-                                + ", Position " + position
-                                + ", orderId " + container.getOrderId()
-                                + ", Priority " + container.getPriority()
-                        );
+                        printStorageInfo(container, aisle, level, slotIndex, position, "");
 
                         nextAisleIndex = (aisleIndex + 1) % numberOfAisles;
 
@@ -97,15 +101,7 @@ public class Warehouse {
 
             String position = slot.addContainer(container);
             if (position != null) {
-                System.out.println("Container: " + container.getId()
-                        + " wurde eingelagert in Gasse " + aisle.getNumber()
-                        + ", Ebene " + level.getNumber()
-                        + ", Fach " + (slotIndex + 1)
-                        + ", Position " + position
-                        + ", orderId " + container.getOrderId()
-                        + ", Priority " + container.getPriority()
-                        + " (nahe am gleichen Auftrag)");
-
+                printStorageInfo(container, aisle, level, slotIndex, position, " (nahe am gleichen Auftrag)");
                 return true;
             }
         }
@@ -117,11 +113,11 @@ public class Warehouse {
 
         if (priority == Priority.HIGH) {
             for (int i = 0; i < numberOfLevels; i++) {
-                order[i] = i; // 0,1,2,3...
+                order[i] = i;
             }
         } else if (priority == Priority.LOW) {
             for (int i = 0; i < numberOfLevels; i++) {
-                order[i] = numberOfLevels - 1 - i; // آخر مستوى للأول
+                order[i] = numberOfLevels - 1 - i;
             }
         } else {
             int index = 0;
@@ -136,6 +132,23 @@ public class Warehouse {
         }
 
         return order;
+    }
+
+
+    private void printStorageInfo(Container container,
+                                  Aisle aisle,
+                                  Level level,
+                                  int slotIndex,
+                                  String position,
+                                  String note) {
+        System.out.println("Container: " + container.getId()
+                + " wurde eingelagert in Gasse " + aisle.getNumber()
+                + ", Ebene " + level.getNumber()
+                + ", Fach " + (slotIndex + 1)
+                + ", Position " + position
+                + ", orderId " + container.getOrderId()
+                + ", Priority " + container.getPriority()
+                + note);
     }
 
     public List<Aisle> getAisles() {
