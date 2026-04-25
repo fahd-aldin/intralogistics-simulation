@@ -25,6 +25,10 @@ import com.intralogistics.simulation.model.*;
             }
 
 
+            warehouse.retrieveContainerById(2);
+            warehouse.retrieveContainerById(3);
+
+
             /*for( int i  = 1; i <= 20; i++){
                 Container c = new Container(i, ContainerType.SOURCE, Priority.LOW, i + 100);
                 boolean stored = warehouse.storeContainer(c);

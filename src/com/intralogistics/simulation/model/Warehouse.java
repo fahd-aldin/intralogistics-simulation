@@ -134,6 +134,53 @@ public class Warehouse {
         return order;
     }
 
+    public boolean retrieveContainerById(int containerId) {
+        for (Aisle aisle : aisles) {
+            for (Level level : aisle.getLevels()) {
+                for (int slotIndex = 0; slotIndex < level.getSlots().size(); slotIndex++) {
+                    StorageSlot slot = level.getSlots().get(slotIndex);
+
+                    Container front = slot.getFront();
+                    Container back = slot.getBack();
+
+                    if (front != null && front.getId() == containerId) {
+                        slot.setFront(null);
+
+                        System.out.println("Container " + containerId +
+                                " wurde ausgelagert aus Gasse " + aisle.getNumber() +
+                                ", Ebene " + level.getNumber() +
+                                ", Fach " + (slotIndex + 1) +
+                                ", Position FRONT");
+
+                        return true;
+                    }
+
+                    if (back != null && back.getId() == containerId) {
+
+                        if (front != null) {
+                            System.out.println("Container " + containerId +
+                                    " ist im BACK, FRONT muss zuerst entfernt werden!");
+                            return false;
+                        }
+
+                        slot.setBack(null);
+
+                        System.out.println("Container " + containerId +
+                                " wurde ausgelagert aus Gasse " + aisle.getNumber() +
+                                ", Ebene " + level.getNumber() +
+                                ", Fach " + (slotIndex + 1) +
+                                ", Position BACK");
+
+                        return true;
+                    }
+                }
+            }
+        }
+
+        System.out.println("Container " + containerId + " nicht gefunden!");
+        return false;
+    }
+
 
     private void printStorageInfo(Container container,
                                   Aisle aisle,

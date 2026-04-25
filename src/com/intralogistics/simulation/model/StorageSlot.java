@@ -26,9 +26,15 @@ public class StorageSlot {
     public Container getFront() {
         return front;
     }
+    public void setFront(Container container) {
+        this.front = container;
+    }
 
     public Container getBack() {
         return back;
+    }
+    public void setBack(Container container) {
+        this.back = container;
     }
 
     @Override
