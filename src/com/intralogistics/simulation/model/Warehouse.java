@@ -135,8 +135,12 @@ public class Warehouse {
     }
 
     public boolean retrieveContainerById(int containerId) {
-        for (Aisle aisle : aisles) {
-            for (Level level : aisle.getLevels()) {
+        for (int aisleIndex = 0; aisleIndex < aisles.size(); aisleIndex++) {
+            Aisle aisle = aisles.get(aisleIndex);
+
+            for (int levelIndex = 0; levelIndex < aisle.getLevels().size(); levelIndex++) {
+                Level level = aisle.getLevels().get(levelIndex);
+
                 for (int slotIndex = 0; slotIndex < level.getSlots().size(); slotIndex++) {
                     StorageSlot slot = level.getSlots().get(slotIndex);
 
@@ -144,7 +148,7 @@ public class Warehouse {
                     Container back = slot.getBack();
 
                     if (front != null && front.getId() == containerId) {
-                        slot.setFront(null);
+                        slot.removeFront();
 
                         System.out.println("Container " + containerId +
                                 " wurde ausgelagert aus Gasse " + aisle.getNumber() +
@@ -156,20 +160,34 @@ public class Warehouse {
                     }
 
                     if (back != null && back.getId() == containerId) {
+                        Container temp = null;
 
                         if (front != null) {
-                            System.out.println("Container " + containerId +
-                                    " ist im BACK, FRONT muss zuerst entfernt werden!");
-                            return false;
+                            temp = slot.removeFront();
+
+                            System.out.println("Front container " + temp.getId()
+                                    + " wurde temporär entfernt ...");
                         }
 
-                        slot.setBack(null);
+                        slot.removeBack();
 
                         System.out.println("Container " + containerId +
                                 " wurde ausgelagert aus Gasse " + aisle.getNumber() +
                                 ", Ebene " + level.getNumber() +
                                 ", Fach " + (slotIndex + 1) +
                                 ", Position BACK");
+
+                        if (temp != null) {
+                            System.out.println("Reinlagern von temporärem Container " + temp.getId());
+
+                            boolean reinsertedSameLocation =
+                                    storeInSpecificLocation(temp, aisleIndex, levelIndex);
+
+                            if (!reinsertedSameLocation) {
+                                System.out.println("Kein Platz am ursprünglichen Ort. Suche neuen Lagerplatz...");
+                                storeContainer(temp);
+                            }
+                        }
 
                         return true;
                     }

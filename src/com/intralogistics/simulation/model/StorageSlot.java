@@ -23,18 +23,26 @@ public class StorageSlot {
         return null;
     }
 
+    public Container removeFront() {
+        if (front == null) return null;
+        Container temp = front;
+        front = null;
+        return temp;
+    }
+
+    public Container removeBack() {
+        if (back == null) return null;
+        Container temp = back;
+        back = null;
+        return temp;
+    }
+
     public Container getFront() {
         return front;
-    }
-    public void setFront(Container container) {
-        this.front = container;
     }
 
     public Container getBack() {
         return back;
-    }
-    public void setBack(Container container) {
-        this.back = container;
     }
 
     @Override
