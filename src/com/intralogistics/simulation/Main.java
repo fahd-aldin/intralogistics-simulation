@@ -1,44 +1,61 @@
 package com.intralogistics.simulation;
 
 import com.intralogistics.simulation.model.*;
+import com.intralogistics.simulation.service.*;
 
+public class Main {
+    public static void main(String[] args) {
 
-    public class Main {
-        public static void main(String[] args) {
-            Warehouse warehouse = new Warehouse(2, 4, 2);
+        System.out.println("=== Intralogistics Warehouse Simulation ===");
 
+        // Create warehouse and services
+        Warehouse warehouse = new Warehouse(4, 10, 5);
+        StorageService storageService = new StorageService(warehouse);
+        RetrievalService retrievalService = new RetrievalService(warehouse, storageService);
 
-            Container c1 = new Container(1, ContainerType.SOURCE, Priority.HIGH, 1001);
-            Container c2 = new Container(2, ContainerType.SOURCE, Priority.MEDIUM, 1002);
-            Container c3 = new Container(3, ContainerType.SOURCE, Priority.LOW, 1001);
-            Container c4 = new Container(4, ContainerType.SOURCE, Priority.LOW);
+        // Create realistic container data
+        Container[] containers = {
+                new Container(1, ContainerType.SOURCE, Priority.HIGH, 1001),
+                new Container(2, ContainerType.SOURCE, Priority.MEDIUM, 1002),
+                new Container(3, ContainerType.SOURCE, Priority.LOW, 1001),
+                new Container(4, ContainerType.SOURCE, Priority.LOW),
+                new Container(5, ContainerType.SOURCE, Priority.HIGH, 1003),
+                new Container(6, ContainerType.SOURCE, Priority.MEDIUM, 1002),
+                new Container(7, ContainerType.SOURCE, Priority.LOW),
+                new Container(8, ContainerType.SOURCE, Priority.HIGH, 1001)
+        };
 
-            warehouse.storeContainer(c1);
-            warehouse.storeContainer(c2);
-            warehouse.storeContainer(c3);
-            warehouse.storeContainer(c4);
-
-            int[] location = warehouse.findLocationByOrderId(1001);
-            if (location != null) {
-                System.out.println("Auftrag 1001 gefunden in Gasse "
-                        + (location[0] + 1) + ", Ebene " + (location[1] + 1));
-            }
-
-
-            warehouse.retrieveContainerById(2);
-            warehouse.retrieveContainerById(3);
-
-
-            /*for( int i  = 1; i <= 20; i++){
-                Container c = new Container(i, ContainerType.SOURCE, Priority.LOW, i + 100);
-                boolean stored = warehouse.storeContainer(c);
-
-                if (!stored) {
-                    System.out.println("Container " + c.getId() + " konnte nicht eingelagert werden: Lager voll.");
-                }
-            }
-
-             */
-
+        // Storage phase
+        System.out.println("--- Storage Phase ---");
+        for (Container c : containers) {
+            storageService.storeContainer(c);
         }
+
+        // Order lookup
+        System.out.println("--- Order Lookup ---");
+        int[] location = storageService.findLocationByOrderId(1001);
+        if (location != null) {
+            System.out.println("Order 1001 found in Gasse "
+                    + (location[0] + 1) + ", Ebene "
+                    + (location[1] + 1));
+        } else {
+            System.out.println("Order 1001 not found.");
+        }
+
+        // Retrieval tests
+        // FRONT retrieval
+        System.out.println("--- Retrieval FRONT ---");
+        retrievalService.retrieveContainerById(1);
+
+        // BACK retrieval (with relocation)
+        System.out.println("--- Retrieval BACK (with relocation) ---");
+        retrievalService.retrieveContainerById(3);
+
+        // Non-existing container
+        System.out.println("--- Retrieval NOT FOUND ---");
+        retrievalService.retrieveContainerById(999);
+
+        System.out.println("=== Simulation Finished ===");
     }
+}
+
