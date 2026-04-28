@@ -26,7 +26,9 @@ sind als nächste Schritte geplant.
 
 ## Projektstruktur
 
-* **Warehouse**: verwaltet das gesamte Lager und enthält die Einlagerungs- und Auslagerungslogik
+* **Warehouse**: repräsentiert die Struktur des Lagers und enthält alle Gassen (Aisles)
+* **StorageService**: enthält die Einlagerungslogik (Storage-Strategien, Prioritäten, Auftragslogik)
+* **RetrievalService**: enthält die Auslagerungslogik inklusive Umlagerung bei zweifach tiefen Lagerfächern
 * **Aisle**: repräsentiert eine Gasse im Lager
 * **Level**: repräsentiert eine Ebene innerhalb einer Gasse
 * **StorageSlot**: Lagerfach mit zwei Positionen (FRONT / BACK)
