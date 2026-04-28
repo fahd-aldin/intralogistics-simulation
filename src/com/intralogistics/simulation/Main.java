@@ -13,6 +13,8 @@ public class Main {
         StorageService storageService = new StorageService(warehouse);
         RetrievalService retrievalService = new RetrievalService(warehouse, storageService);
 
+
+
         // Create realistic container data
         Container[] containers = {
                 new Container(1, ContainerType.SOURCE, Priority.HIGH, 1001),
@@ -55,7 +57,18 @@ public class Main {
         System.out.println("--- Retrieval NOT FOUND ---");
         retrievalService.retrieveContainerById(999);
 
+        PickingArea pickingArea = new PickingArea();
+        PickingWorkstation pickingWorkstation = pickingArea.getWorkstationById(1);
+
+        pickingWorkstation.setTargetContainer(new Container(100, ContainerType.EMPTY, Priority.LOW));
+
+        pickingWorkstation.addSourceContainer(new Container(200, ContainerType.SOURCE, Priority.LOW));
+        pickingWorkstation.addSourceContainer(new Container(201, ContainerType.SOURCE, Priority.LOW));
+        pickingWorkstation.addSourceContainer(new Container(202, ContainerType.SOURCE, Priority.LOW));
+        pickingArea.printStatus();
+
         System.out.println("=== Simulation Finished ===");
     }
+
 }
 
