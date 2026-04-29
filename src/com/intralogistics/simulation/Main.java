@@ -67,7 +67,21 @@ public class Main {
         pickingWorkstation.addSourceContainer(new Container(202, ContainerType.SOURCE, Priority.LOW));
         pickingArea.printStatus();
 
+
+        System.out.println("===  leere Behälter ===");
+
+
+        EmptyContainerBuffer buffer = new EmptyContainerBuffer();
+
+        buffer.addEmptyContainer(new Container(100, ContainerType.EMPTY, Priority.LOW));
+        buffer.addEmptyContainer(new Container(101, ContainerType.EMPTY, Priority.LOW));
+
+        Container target = buffer.getEmptyContainer();
+
+        System.out.println("Zielbehälter erhalten: " + target);
+
         System.out.println("=== Simulation Finished ===");
+
     }
 
 }
