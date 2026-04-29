@@ -48,4 +48,24 @@ public class PickingWorkstation {
     public boolean isReadyForPicking() {
         return targetContainer != null && !sourceContainers.isEmpty();
     }
+    public boolean assignTargetFromBuffer(EmptyContainerBuffer buffer) {
+        if (targetContainer != null) {
+            System.out.println("Arbeitsplatz " + id + " hat bereits einen Zielbehälter.");
+            return false;
+        }
+
+        Container emptyContainer = buffer.getEmptyContainer();
+
+        if (emptyContainer == null) {
+            System.out.println("Kein leerer Behälter verfügbar für Arbeitsplatz " + id);
+            return false;
+        }
+
+        this.targetContainer = emptyContainer;
+
+        System.out.println("Zielbehälter " + emptyContainer.getId()
+                + " wurde Arbeitsplatz " + id + " zugewiesen.");
+
+        return true;
+    }
 }
