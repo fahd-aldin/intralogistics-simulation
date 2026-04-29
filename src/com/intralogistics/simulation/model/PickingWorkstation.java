@@ -48,6 +48,8 @@ public class PickingWorkstation {
     public boolean isReadyForPicking() {
         return targetContainer != null && !sourceContainers.isEmpty();
     }
+
+    // weist einen Zielbehälter aus dem Leerbehälter-Puffer zu
     public boolean assignTargetFromBuffer(EmptyContainerBuffer buffer) {
         if (targetContainer != null) {
             System.out.println("Arbeitsplatz " + id + " hat bereits einen Zielbehälter.");
@@ -64,6 +66,26 @@ public class PickingWorkstation {
         this.targetContainer = emptyContainer;
 
         System.out.println("Zielbehälter " + emptyContainer.getId()
+                + " wurde Arbeitsplatz " + id + " zugewiesen.");
+
+        return true;
+    }
+
+    // weist einen Quellbehälter dem Arbeitsplatz zu (max. 3 Plätze)
+    public boolean assignSourceContainer(Container sourceContainer) {
+        if (sourceContainer.getType() != ContainerType.SOURCE) {
+            System.out.println("Nur SOURCE-Behälter können als Quellbehälter zugewiesen werden.");
+            return false;
+        }
+
+        if (sourceContainers.size() >= MAX_SOURCE_CONTAINERS) {
+            System.out.println("Arbeitsplatz " + id + " hat keine freien Quellplätze.");
+            return false;
+        }
+
+        sourceContainers.add(sourceContainer);
+
+        System.out.println("Quellbehälter " + sourceContainer.getId()
                 + " wurde Arbeitsplatz " + id + " zugewiesen.");
 
         return true;
